@@ -5,11 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Web App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <script>
+        function validateForm() {
+            let email = document.forms["userForm"]["email"].value;
+            let phone = document.forms["userForm"]["phone"].value;
+            let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            let phonePattern = /^\d{10}$/;
+
+            if (!emailPattern.test(email)) {
+                alert("Invalid email format! Please enter a valid email.");
+                return false;
+            }
+            if (phone && !phonePattern.test(phone)) {  // Phone is optional but must be valid if provided
+                alert("Phone number must be exactly 10 digits.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
     <h1>Welcome to the Simple Web App</h1>
-    <form action="/submit" method="post">
+
+    <!-- Display Flask Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p style="color: red;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form name="userForm" action="/submit" method="post" onsubmit="return validateForm()">
         Name: <input type="text" name="name" required><br>
+        Father's Name: <input type="text" name="father_name" required><br>
         Email: <input type="email" name="email" required><br>
         Phone: <input type="text" name="phone"><br>
         <input type="submit" value="Submit">
